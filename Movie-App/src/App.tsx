@@ -1,6 +1,8 @@
 import React from 'react'
 import {useEffect, useState } from 'react'
+import Spinner from './Component/Spinner';
 import Search from './Component/Search'
+import MovieCard from './Component/MovieCard';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const access_token = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
@@ -36,6 +38,9 @@ const App = () => {
   }catch (error) {
       console.error(`Error fetching movies:, ${error}`);
       setErrorMessage('Failed to fetch movies. Please try again later.');
+   }finally{
+    
+    setLoading(false);
    }
    }
 
@@ -53,12 +58,21 @@ const App = () => {
         <img src="./hero-img.png" alt="Hero banner" className="rounded-md" />
         <h1 className="">You Can find ur <span className="text-gradient">Movie</span> right here just search it</h1>
       <Search  searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <h1 className="text-2xl text-gray-50">{searchTerm}</h1>
+     
       </header>
 
       <section className="trendy-movies">
-        <h1 className="text-2xl text-left text-gray-50">Trendy Movies</h1>
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        <h1 className="text-2xl text-left mt-[30px] text-gray-50">Trendy Movies</h1>
+        {loading ? (
+          <Spinner />
+        ) : errorMessage ? (
+          <p className="text-red-500">{errorMessage}</p>
+        ) : (<ul>
+          {movieslist.map((movie) => (
+           <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </ul>
+        )}
       </section>
     </div>
    </main>
