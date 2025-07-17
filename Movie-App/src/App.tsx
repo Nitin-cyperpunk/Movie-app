@@ -3,6 +3,7 @@ import {useEffect, useState } from 'react'
 import Spinner from './Component/Spinner';
 import Search from './Component/Search'
 import MovieCard from './Component/MovieCard';
+import { useDebounce } from 'react-use';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const access_token = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
@@ -18,11 +19,18 @@ const App = () => {
    const [errorMessage, setErrorMessage] = useState('');
    const [movieslist, setMovieslist] = useState([]);
    const [loading, setLoading] = useState(false);
-   const fetchMovies = async () => {
+   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+   useDebounce(() => {
+    setDebouncedSearchTerm(searchTerm);
+   }, 500, [searchTerm]);
+   const fetchMovies = async (query = '') => {
     setLoading(true);
     setErrorMessage('');
     try{
-    const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+    const endpoint = query ?
+    `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}` 
+    : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
     const response = await fetch(endpoint, API_OPTIONS);
     if(!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,16 +54,16 @@ const App = () => {
 
 
    useEffect(() => {
-    fetchMovies();
-   }, []);
+    fetchMovies(searchTerm);
+   }, [searchTerm]);
    
   return (
     
    <main>
     <div className="pattern" />
     <div className="wrapper bg-[background-image-hero-pattern] bg-cover bg-no-repeat bg-center">
-      <header className="">
-        <img src="./hero-img.png" alt="Hero banner" className="rounded-md" />
+      <header>
+        <img src="./hero-img.png" alt="Hero banner" className="rounded-md hover:scale-110 duration-300" />
         <h1 className="">You Can find ur <span className="text-gradient">Movie</span> right here just search it</h1>
       <Search  searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
      
@@ -73,6 +81,7 @@ const App = () => {
           ))}
         </ul>
         )}
+        
       </section>
     </div>
    </main>
