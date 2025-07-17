@@ -2,7 +2,7 @@ import React from 'react'
 import index from './index.css'
 
 const MovieCard = ({ movie:
-  { title, vote_average, poster_path, release_date, original_language }
+  { title, vote_average, poster_path, release_date, original_language, overview }
 }) => {
   return (
     <div className='movie-card'>
