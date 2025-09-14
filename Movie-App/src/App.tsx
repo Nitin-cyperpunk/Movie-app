@@ -3,10 +3,10 @@ import {useEffect, useState } from 'react'
 import Spinner from './Component/Spinner';
 import Search from './Component/Search'
 import MovieCard from './Component/MovieCard';
+import MovieDetails from './Component/movieDetails';
 import { useDebounce } from 'react-use';
 
 import { getTrendingMovies, updateSearchCount } from './appwrite';
-import Home from './pages/home';
 export interface MovieType {
       adult: boolean,
       backdrop_path: string,
@@ -24,6 +24,18 @@ export interface MovieType {
       vote_count: number,
 
     }
+export interface MovieInfo {
+  id: number;
+  title: string;
+  poster_url: string;
+  search_count: number;
+  rating: number;
+  release_date: string;
+  overview: string;
+  genres: string[];
+  directors: string[];
+  writers: string[];
+}
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const access_token = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const API_OPTIONS = {
@@ -134,8 +146,10 @@ const App = () => {
         )}
         
       </section>
+{movieslist.length > 0 && (
+  <MovieDetails movie={movieslist[1]}  />
+)}
     </div>
-    <Home/>
    </main>
   )
 }
