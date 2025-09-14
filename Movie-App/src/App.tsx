@@ -44,20 +44,20 @@ const API_OPTIONS = {
     accept: 'application/json',
     Authorization: `Bearer ${access_token}`
   }
-}
-const App = () => {
-   const [searchTerm, setSearchTerm] = useState('');
-   const [errorMessage, setErrorMessage] = useState('');
-   const [movieslist, setMovieslist] = useState<MovieType[]>([]);
-   const [trendingMovies, setTrendingMovies] = useState<Document[]|undefined>([]);
-   const [loading, setLoading] = useState(false);
-   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-  useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm])
-
-   const fetchMovies = async (query = '') => {
-    setLoading(true);
-    setErrorMessage('');
+};
+  const App = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [movieslist, setMovieslist] = useState<MovieType[]>([]);
+    const [trendingMovies, setTrendingMovies] = useState<Document[]|undefined>([]);
+    const [loading, setLoading] = useState(false);
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+    
+    useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm])
+    
+    const fetchMovies = async (query = '') => {
+      setLoading(true);
+      setErrorMessage('');
     try{
     const endpoint = query ?
     `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}` 
@@ -82,34 +82,40 @@ const App = () => {
       console.error(`Error fetching movies:, ${error}`);
       setErrorMessage('Failed to fetch movies. Please try again later.');
    }finally{
-    
-    setLoading(false);
-   }
-   }
-
-   const loadTrendingMovies = async () => {
+     
+     setLoading(false);
+    }
+  }
+  
+  const loadTrendingMovies = async () => {
     try{
       const movies = await getTrendingMovies() ;
       setTrendingMovies(movies );
-
+      
     }catch (error) {
       console.error(`Error fetching trending movies: ${error}`);
       
     }
-   }
-
-
-   useEffect(() => {
+  }
+  
+ 
+  useEffect(() => {
     fetchMovies(debouncedSearchTerm);
     
-   }, [debouncedSearchTerm]);
-
+  }, [debouncedSearchTerm]);
+  
    useEffect(() => {
-    loadTrendingMovies();
-   }, []);
-   
-  return (
+     loadTrendingMovies();
+    }, []);
+    const [selectedMovie, setSelectedMovie] = useState<MovieType | null>(null);
+
+  const handleMovieClick = (movie: MovieType) => {
+    setSelectedMovie(movie);
+  };
+
+  
     
+return (
    <main>
     <div className="pattern" />
     <div className="wrapper bg-[background-image-hero-pattern] bg-cover bg-no-repeat bg-center">
@@ -140,14 +146,21 @@ const App = () => {
           <p className="text-red-500">{errorMessage}</p>
         ) : (<ul>
           {movieslist.map((movie) => (
-           <MovieCard key={movie.id} movie={movie} />
+           <div key={movie.id}>
+             <MovieCard movie={movie} />
+             <button className="" onClick={() => handleMovieClick(movie)}>{selectedMovie?.title}</button>
+           </div>
           ))}
         </ul>
         )}
         
       </section>
+      <search>
+        <input type="text" placeholder="Search..." />
+        <button type="submit">Search</button>
+      </search>
 {movieslist.length > 0 && (
-  <MovieDetails movie={movieslist[1]}  />
+  <MovieDetails movie={movieslist[3]}    />
 )}
     </div>
    </main>
