@@ -6,6 +6,7 @@ import MovieCard from './Component/MovieCard';
 import { useDebounce } from 'react-use';
 
 import { getTrendingMovies, updateSearchCount } from './appwrite';
+import Home from './pages/home';
 export interface MovieType {
       adult: boolean,
       backdrop_path: string,
@@ -106,7 +107,7 @@ const App = () => {
       <Search  searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
      
       </header>
-      {trendingMovies.length > 0 && (
+      {/* {trendingMovies.length > 0 && (
       <section className="trending">
         <h2>Tending Movies</h2>
         <ul>
@@ -117,7 +118,7 @@ const App = () => {
               </li>
           ))}</ul>
         </section>
-)}
+)} */}
 
       <section className="all-movies">
         <h1 className="text-2xl text-left mt-[30px] text-gray-50">All Movies</h1>
@@ -134,6 +135,7 @@ const App = () => {
         
       </section>
     </div>
+    <Home/>
    </main>
   )
 }
